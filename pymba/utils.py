@@ -1,6 +1,7 @@
 import math
 import tensorflow as tf
 import numpy as np
+import sys
 
 def asinh(x, scale=5.):
     """Asinh transform."""
@@ -22,3 +23,13 @@ def tbn(name):
 def obn(name):
     """Get the operation node in the default graph of the given name."""
     return tf.get_default_graph().get_operation_by_name(name)
+
+
+class Silence:
+    """Suppress any printing while in context"""
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = None
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout = self._original_stdout
