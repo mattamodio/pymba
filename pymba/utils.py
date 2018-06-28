@@ -26,7 +26,7 @@ def obn(name):
 
 class Silencer(object):
     def flush(self): pass
-    def write(self): pass
+    def write(self, s): pass
 
 class Silence:
     """Suppress any printing while in context"""
