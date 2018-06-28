@@ -24,12 +24,14 @@ def obn(name):
     """Get the operation node in the default graph of the given name."""
     return tf.get_default_graph().get_operation_by_name(name)
 
+class Silencer(object):
+    def flush(self): pass
 
 class Silence:
     """Suppress any printing while in context"""
     def __enter__(self):
         self._original_stdout = sys.stdout
-        sys.stdout = None
+        sys.stdout = Silencer()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout = self._original_stdout
