@@ -3,6 +3,18 @@ import tensorflow as tf
 import numpy as np
 import sys
 
+def add_to_npzfile(fn, var_to_add, varname_to_add):
+    varvals = {}
+    if os.path.exists(fn):
+        with open(fn, 'rb') as f:
+            npzfile = np.load(f)
+            varvals = {v:npzfile[v] for v in npzfile.files}
+
+    varvals[varname_to_add] = var_to_add
+
+    with open(fn, 'wb+') as f:
+        np.savez(f, **varvals)
+
 def asinh(x, scale=5.):
     """Asinh transform."""
     f = np.vectorize(lambda y: math.asinh(y / scale))
