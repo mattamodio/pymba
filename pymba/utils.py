@@ -2,6 +2,7 @@ import math
 import tensorflow as tf
 import numpy as np
 import sys
+import os
 
 def add_to_npzfile(fn, var_to_add, varname_to_add):
     varvals = {}
