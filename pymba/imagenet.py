@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
+import skimage.transform
 
 
 def get_data_cifar(datadir, label1, label2, tanh_transform=True):
@@ -34,11 +35,11 @@ def get_data_imagenet(datadir, wnid1, wnid2, D=128, tanh_transform=True):
     b1 = sorted(glob.glob('{}/{}/*.JPEG'.format(datadir, wnid1)))
     b2 = sorted(glob.glob('{}/{}/*.JPEG'.format(datadir, wnid2)))
 
-    b1 = [scipy.misc.imresize(plt.imread(f), (D, D)) for f in b1]
+    b1 = [skimage.transform.imresize(plt.imread(f), (D, D)) for f in b1]
     b1 = [img for img in b1 if len(img.shape) == 3]
     b1 = np.stack(b1, axis=0)
 
-    b2 = [scipy.misc.imresize(plt.imread(f), (D, D)) for f in b2]
+    b2 = [skimage.transform.imresize(plt.imread(f), (D, D)) for f in b2]
     b2 = [img for img in b2 if len(img.shape) == 3]
     b2 = np.stack(b2, axis=0)
 
