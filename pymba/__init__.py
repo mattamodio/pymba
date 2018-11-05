@@ -1,3 +1,3 @@
 from .utils import *
-import imagenet
+from . import imagenet
 
