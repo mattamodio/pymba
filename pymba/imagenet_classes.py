@@ -426,7 +426,7 @@ n02007558 425 flamingo
 n02009912 426 American_egret
 n02009229 427 little_blue_heron
 n02011460 428 bittern
-n02012849 429 crane
+n02012849 429 crane_bird
 n02013706 430 limpkin
 n02018207 431 American_coot
 n02018795 432 bustard
@@ -542,7 +542,7 @@ n04090263 541 rifle
 n04008634 542 projectile
 n03085013 543 computer_keyboard
 n04505470 544 typewriter_keyboard
-n03126707 545 crane
+n03126707 545 crane_machine
 n03666591 546 lighter
 n02666196 547 abacus
 n02977058 548 cash_machine
@@ -974,7 +974,7 @@ n03680355 973 Loafer
 n07614500 974 ice_cream
 n07695742 975 pretzel
 n04033995 976 quilt
-n03710721 977 maillot
+n03710721 977 maillot_bathing_suit
 n04392985 978 tape_player
 n03047690 979 clog
 n03584254 980 iPod
