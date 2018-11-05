@@ -43,7 +43,6 @@ def get_imagenet_classes():
     with open(fn) as f:
         for line in f:
             wnid, num, name = line.strip().split(' ')
-            print(line)
             classes[name] = wnid
     return classes
 
