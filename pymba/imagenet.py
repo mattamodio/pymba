@@ -30,8 +30,16 @@ def get_data_cifar(datadir, label1, label2, tanh_transform=True):
 
     return batch1, batch2
 
+def get_imagenet_classes(fn='imagenet_classes.txt'):
+    classes = {}
+    with open(fn) as f:
+        for line in f:
+            wnid, num, name = line.strip().split(' ')
+            classes[name] = wnid
+    return classes
 
-def get_data_imagenet(datadir, wnid1, wnid2, D=128, tanh_transform=True):
+
+def get_imagenet_data(datadir, wnid1, wnid2, D=128, tanh_transform=True):
     b1 = sorted(glob.glob('{}/{}/*.JPEG'.format(datadir, wnid1)))
     b2 = sorted(glob.glob('{}/{}/*.JPEG'.format(datadir, wnid2)))
 
