@@ -38,11 +38,12 @@ def get_data_cifar(datadir, label1, label2, tanh_transform=True):
     return batch1, batch2
 
 def get_imagenet_classes():
-    fn = get_file('imagenet_classes.txt')
+    fn = get_file('imagenet_classes.py')
     classes = {}
     with open(fn) as f:
         for line in f:
             wnid, num, name = line.strip().split(' ')
+            print(line)
             classes[name] = wnid
     return classes
 
