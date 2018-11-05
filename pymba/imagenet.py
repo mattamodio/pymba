@@ -1,8 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
+import os
 import skimage.transform
 
+
+
+def get_file(_file):
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _file = os.path.join(_here, _file)
+    return _file
 
 def get_data_cifar(datadir, label1, label2, tanh_transform=True):
     #     classes
@@ -30,7 +37,8 @@ def get_data_cifar(datadir, label1, label2, tanh_transform=True):
 
     return batch1, batch2
 
-def get_imagenet_classes(fn='imagenet_classes.txt'):
+def get_imagenet_classes():
+    fn = get_file('imagenet_classes.txt')
     classes = {}
     with open(fn) as f:
         for line in f:
