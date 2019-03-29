@@ -3,13 +3,16 @@ import tensorflow as tf
 import numpy as np
 import sys
 import os
+import sklearn
+import sklearn.metrics
+import datetime
 
 def add_to_npzfile(fn, var_to_add, varname_to_add):
     varvals = {}
     if os.path.exists(fn):
         with open(fn, 'rb') as f:
             npzfile = np.load(f)
-            varvals = {v:npzfile[v] for v in npzfile.files}
+            varvals = {v: npzfile[v] for v in npzfile.files}
 
     varvals[varname_to_add] = var_to_add
 
@@ -43,52 +46,14 @@ def now():
 def get_all_node_names():
     return [n.name for n in tf.get_default_graph().as_graph_def().node]
 
+def sigmoid(x):
 
-def conv(x, nfilt, name, padding='same', k=4, s=2, d=1, use_bias=True):
-    return tf.layers.conv2d(x, filters=nfilt, kernel_size=k, padding=padding, strides=[s,s], dilation_rate=[d,d],
-                            kernel_initializer=tf.truncated_normal_initializer(0,.02), activation=None,
-                            use_bias=use_bias, name=name)
-
-def conv_t(x, nfilt, name, padding='same', k=4, s=2, use_bias=True):
-    return tf.layers.conv2d_transpose(x, filters=nfilt, kernel_size=k, padding=padding, strides=[s,s], 
-                            kernel_initializer=tf.truncated_normal_initializer(0,.02), activation=None,
-                            use_bias=use_bias, name=name)
-
-def unet_conv(x, nfilt, name, is_training, s=2, k=4, d=1, use_bias=True, batch_norm=None, activation=lrelu):
-    x = conv(x, nfilt, name, use_bias=use_bias, d=d, s=s, k=k)
-    if batch_norm:
-        x = batch_norm(x, name='batch_norm_{}'.format(name), training=is_training)
-
-    if activation:
-        x = activation(x)
-    return x
-
-def unet_conv_t(x, encoderx, nfilt, name, is_training, skip_connections=True, s=2, k=4, use_bias=True, use_dropout=0, batch_norm=None, activation=tf.nn.relu):
-    x = conv_t(x, nfilt, name, s=s, k=k, use_bias=use_bias)
-    if use_dropout:
-        x = tf.layers.dropout(x, use_dropout, training=is_training)
-
-    if batch_norm:
-        x = batch_norm(x, name='batch_norm_{}'.format(name), training=is_training)
-
-    if activation:
-        x = activation(x)
-
-    if skip_connections:
-        x = tf.concat([x,encoderx], 3)
-    
-    return x
-
-def batch_normalization(tensor, name, training):
-
-    return tf.layers.batch_normalization(tensor, training=training, momentum=.9, scale=True, fused=True, name=name)
+    return 1 / (1 + np.exp(-x))
 
 def build_config(limit_gpu_fraction=0.2, limit_cpu_fraction=10):
     if limit_gpu_fraction > 0:
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-        gpu_options = tf.GPUOptions(
-            allow_growth=True,
-            per_process_gpu_memory_fraction=limit_gpu_fraction)
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=limit_gpu_fraction)
         config = tf.ConfigProto(gpu_options=gpu_options)
     else:
         os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -112,12 +77,46 @@ def build_config(limit_gpu_fraction=0.2, limit_cpu_fraction=10):
     return config
 
 
+def get_layer(sess, intensor, data, outtensor, batch_size=100):
+    out = []
+    for batch in np.array_split(data, data.shape[0]/batch_size):
+        feed = {intensor: batch}
+        batchout = sess.run(outtensor, feed_dict=feed)
+        out.append(batchout)
+    out = np.concatenate(out, axis=0)
+
+    return out
+
+
+def mmd(x1, x2):
+    def calculate_mmd(k1, k2, k12):
+        return k1.sum()/(k1.shape[0]*k1.shape[1]) + k2.sum()/(k2.shape[0]*k2.shape[1]) - 2*k12.sum()/(k12.shape[0]*k12.shape[1])
+
+    k1 = sklearn.metrics.pairwise.pairwise_distances(x1, x1)
+    k2 = sklearn.metrics.pairwise.pairwise_distances(x2, x2)
+    k12 = sklearn.metrics.pairwise.pairwise_distances(x1, x2)
+
+    mmd = 0
+    for sigma in [.01, .1, 1., 10.]:
+        k1_ = np.exp(-k1 / sigma**2)
+        k2_ = np.exp(-k2 / sigma**2)
+        k12_ = np.exp(-k12 / sigma**2)
+
+        mmd += calculate_mmd(k1_, k2_, k12_)
+
+    return mmd
+
+def nameop(op, name):
+    return tf.identity(op, name=name)
+
 class Silencer(object):
-    def flush(self): pass
-    def write(self, s): pass
+    def flush(self):
+        pass
+
+    def write(self, s):
+        pass
 
 class Silence:
-    """Suppress any printing while in context"""
     def __enter__(self):
         self._original_stdout = sys.stdout
         self._original_stderr = sys.stderr

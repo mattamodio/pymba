@@ -1,3 +1,5 @@
+import numpy as np
+
 class Loader(object):
     """A Loader class for feeding numpy matrices into tensorflow models."""
 
@@ -37,27 +39,27 @@ class Loader(object):
         """Iterate over the entire dataset in batches."""
         num_rows = self.data[0].shape[0]
 
-        start = 0
-        end = batch_size
-
-        for i in range(num_rows // batch_size):
-            start = i * batch_size
-            end = (i + 1) * batch_size
-
-            if not self.labels_given:
-                yield [x[start:end] for x in self.data][0]
-            else:
-                yield [x[start:end] for x in self.data]
+        end = 0
 
         if batch_size > num_rows:
             if not self.labels_given:
-                yield [x for x in self.data][0]
+                yield [x for x in self.data]
             else:
                 yield [x for x in self.data]
-        if end != num_rows:
-            if not self.labels_given:
-                yield [x[end:] for x in self.data][0]
-            else:
-                yield [x[end:] for x in self.data]
+        else:
+            for i in range(num_rows // batch_size):
+                start = i * batch_size
+                end = (i + 1) * batch_size
+
+                if not self.labels_given:
+                    yield [x[start:end] for x in self.data]
+                else:
+                    yield [x[start:end] for x in self.data]
+            print(end, num_rows, self.data[0][end:].shape)
+            if end < num_rows:
+                if not self.labels_given:
+                    yield [x[end:] for x in self.data]
+                else:
+                    yield [x[end:] for x in self.data]
 
 

@@ -46,11 +46,10 @@ def get_imagenet_classes():
             classes[name] = wnid
     return classes
 
+def get_imagenet_data(datadir, wnid, dim=128, tanh_transform=True):
+    b1 = sorted(glob.glob('{}/{}/*.JPEG'.format(datadir, wnid)))
 
-def get_imagenet_data(datadir, wnid1, D=128, tanh_transform=True):
-    b1 = sorted(glob.glob('{}/{}/*.JPEG'.format(datadir, wnid1)))
-
-    b1 = [skimage.transform.imresize(plt.imread(f), (D, D)) for f in b1]
+    b1 = [skimage.transform.resize(plt.imread(f), (dim, dim)) for f in b1]
     b1 = [img for img in b1 if len(img.shape) == 3]
     b1 = np.stack(b1, axis=0)
 
