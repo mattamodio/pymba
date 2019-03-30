@@ -11,31 +11,6 @@ def get_file(_file):
     _file = os.path.join(_here, _file)
     return _file
 
-def get_data_cifar(datadir, label1, label2, tanh_transform=True):
-    #     classes
-    #         0: car
-    #         1: plane
-    #         2: bird
-    #         3: cat
-    #         4: deer
-    #         5: dog
-    #         6: frog
-    #         7: horse
-    #         8: ship
-    #         9: truck
-
-    with open('{}/cifar.npz'.format(datadir), 'rb') as f:
-        npzfile = np.load(f)
-        data = npzfile['data'].astype(np.float32)
-        labels = npzfile['labels']
-
-    if tanh_transform:
-        data = (data / 127.5) - 1
-
-    batch1 = data[labels == label1]
-    batch2 = data[labels == label2]
-
-    return batch1, batch2
 
 def get_imagenet_classes():
     fn = get_file('imagenet_classes.py')

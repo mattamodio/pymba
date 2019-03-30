@@ -5,17 +5,7 @@ import numpy as np
 
 def fcsextract(filename):
     """
-    Attempts to parse an FCS (flow cytometry standard) file
-    Parameters: filename
-        filename: path to the FCS file
-    Returns: (vars,events)
-        vars: a dictionary with the KEY/VALUE pairs found in the HEADER
-        this includes the standard '$ABC' style FCS variable as well as any 
-        custom variables added to the header by the machine or operator
-    
-        events: an [N x D] matrix of the data (as a Python list of lists)
-        i.e. events[99][2] would be the value at the 3rd dimension
-        of the 100th event
+    code adapted from original creator: https://github.com/pontikos/fcstools/blob/master/fcs.extract.py
     """
     fcs_file_name = filename
 

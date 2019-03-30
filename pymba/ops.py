@@ -26,6 +26,9 @@ def unet_conv_t(x, encoderx, nfilt, name, is_training, sn=False, skip_connection
     return x
 
 def conv2d(x, filters, k=5, s=2, sn=False, name=''):
+    """
+    code adapted from original creator: https://github.com/minhnhat93/tf-SNDCGAN/blob/master/libs/ops.py
+    """
     weight_init = tf.truncated_normal_initializer(mean=0.0, stddev=0.02)
     with tf.variable_scope(name):
         if sn:
@@ -41,6 +44,9 @@ def conv2d(x, filters, k=5, s=2, sn=False, name=''):
         return x
 
 def conv2dt(x, filters, k=5, s=2, padding='SAME', sn=False, name=''):
+    """
+    code adapted from original creator: https://github.com/minhnhat93/tf-SNDCGAN/blob/master/libs/ops.py
+    """
     weight_init = tf.random_normal_initializer(mean=0.0, stddev=0.02)
 
     with tf.variable_scope(name):
@@ -58,6 +64,9 @@ def conv2dt(x, filters, k=5, s=2, padding='SAME', sn=False, name=''):
         return x
 
 def dense(x, outdim, sn=False, name=''):
+    """
+    code adapted from original creator: https://github.com/minhnhat93/tf-SNDCGAN/blob/master/libs/ops.py
+    """
     weight_init = tf.random_normal_initializer(mean=0.0, stddev=0.02)
 
     with tf.variable_scope(name):
@@ -74,6 +83,9 @@ def dense(x, outdim, sn=False, name=''):
         return x
 
 def spectral_norm(w, iteration=1):
+    """
+    code adapted from original creator: https://github.com/minhnhat93/tf-SNDCGAN/blob/master/libs/sn.py
+    """
     w_shape = w.shape.as_list()
     w = tf.reshape(w, [-1, w_shape[-1]])
 
@@ -82,11 +94,6 @@ def spectral_norm(w, iteration=1):
     u_hat = u
     v_hat = None
     for i in range(iteration):
-        """
-        power iteration
-        Usually iteration = 1 will be enough
-        """
-
         v_ = tf.matmul(u_hat, tf.transpose(w))
         v_hat = tf.nn.l2_normalize(v_)
 
@@ -104,9 +111,11 @@ def spectral_norm(w, iteration=1):
 
     return w_norm
 
-def batch_norm(x, name, is_training):
-
-    return tf.contrib.layers.batch_norm(x, decay=0.9, updates_collections=None, scale=True, center=True, is_training=is_training, scope=name, reuse=tf.AUTO_REUSE)
+def batch_norm(x, name, is_training, instance=False):
+    if instance:
+        return tf.contrib.layers.instance_norm(x, reuse=tf.AUTO_REUSE, scope=name)
+    else:
+        return tf.contrib.layers.batch_norm(x, decay=0.9, updates_collections=None, scale=True, center=True, is_training=is_training, scope=name, reuse=tf.AUTO_REUSE)
 
 def minibatch(input_, num_kernels=15, kernel_dim=10, name='',):
     """Add minibatch features to input."""

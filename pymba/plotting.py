@@ -15,7 +15,7 @@ def make_legend(ax, labels, s=20, cmap=mpl.cm.jet, **kwargs):
     ax.legend(**kwargs)
 
 def truncate_colormap(cmap, vmin=0.0, vmax=1.0, n=100):
-    new_cmap = mpl.colors.LinearSegmentedColormap.from_list(
-        'trunc({n},{a:.2f},{b:.2f})'.format(n=cmap.name, a=vmin, b=vmax),
-        cmap(np.linspace(vmin, vmax, n)))
+    str_ = 'trunc({n},{a:.2f},{b:.2f})'.format(n=cmap.name, a=vmin, b=vmax)
+    cmap_ = cmap(np.linspace(vmin, vmax, n))
+    new_cmap = mpl.colors.LinearSegmentedColormap.from_list(str_, cmap_)
     return new_cmap

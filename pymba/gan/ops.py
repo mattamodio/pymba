@@ -28,6 +28,9 @@ def adversarial_loss(logits, label, gantype='gan'):
 
 
 def discriminatory_gradient_penalty(x, G, Discriminator_fn, **kwargs):
+    """
+    code adapted from original creator: https://github.com/LynnHo/DCGAN-LSGAN-WGAN-WGAN-GP-Tensorflow/blob/ed45429a295aa6f7ff79b0a26c35a2c0ab0b059a/train_cartoon_wgan_gp.py
+    """
     from tensorflow.python.ops import gradients_impl
     from tensorflow.python.ops.losses import losses
     alpha = tf.random_uniform(shape=[tf.shape(x)[0], 1, 1, 1], minval=0., maxval=1., name='alpha')

@@ -10,6 +10,8 @@ import os
 import scipy.linalg
 
 
+# code adapted from original creator: https://github.com/openai/improved-gan/blob/master/inception_score/model.py
+
 MODEL_DIR = '/tmp/imagenet'
 DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
 softmax = None
